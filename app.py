@@ -1,7 +1,7 @@
 """
 Transformada de Laplace — Ferramenta interativa para resolução de EDOs lineares
 UNIMONTES | Disciplina de Matemática Aplicada | Prof. Fernando Félix
-Alunos: Samuel Antunes França, Bruno Gomes, Júlio César, Leonardo, Marcus
+Alunos: Bruno Gomes, Júlio César, Leonardo, Marcus
 """
 
 import streamlit as st
@@ -422,25 +422,42 @@ col_intro, col_prop = st.columns([3, 2], gap="large")
 with col_intro:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">O método</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">espaço pra titulo</h2>',
+    st.markdown('<h2 class="section-title">Por que usar a Transformada de Laplace?</h2>',
                 unsafe_allow_html=True)
     st.markdown("""
-Passo a passo pra explicar (dps que definirmos eu mexo nisso aqui)
+A Transformada de Laplace converte uma equação diferencial no domínio do tempo em uma
+equação algébrica no domínio de *s*. Isso é útil porque equações algébricas são,
+em geral, mais fáceis de manipular do que equações diferenciais.
+
+O procedimento tem quatro etapas:
+
+1. Aplicar a transformada à EDO, usando as propriedades das derivadas;
+2. Substituir as condições iniciais — elas entram automaticamente na equação algébrica;
+3. Resolver algebricamente para *Y(s)*, a transformada da solução desconhecida;
+4. Inverter *Y(s)* para obter *y(t)*, geralmente via decomposição em frações parciais.
+
+O método é especialmente vantajoso quando a força externa *f(t)* é descontínua
+(funções degrau, impulsos) ou quando as condições iniciais são não nulas, pois esses
+casos entram diretamente no cálculo sem exigir tratamento separado.
+    """)
 
 with col_prop:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">Propriedades fundamentais</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Transformadas das derivadas (tabela do livro)</h2>',
+    st.markdown('<h2 class="section-title">Transformadas das derivadas</h2>',
                 unsafe_allow_html=True)
-st.markdown("### Propriedades usadas")
+    st.markdown("""
+| Função | Transformada |
+|---|---|
+| $y(t)$ | $Y(s)$ |
+| $y'(t)$ | $sY(s) - y(0)$ |
+| $y''(t)$ | $s^2 Y(s) - sy(0) - y'(0)$ |
+| $e^{at}$ | $\\frac{1}{s-a}$ |
+| $\\sin(at)$ | $\\frac{a}{s^2+a^2}$ |
+| $\\cos(at)$ | $\\frac{s}{s^2+a^2}$ |
+| $t^n$ | $\\frac{n!}{s^{n+1}}$ |
+    """)
 
-st.latex(r"\mathcal{L}\{y(t)\}=Y(s)")
-st.latex(r"\mathcal{L}\{y'(t)\}=sY(s)-y(0)")
-st.latex(r"\mathcal{L}\{y''(t)\}=s^2Y(s)-sy(0)-y'(0)")
-
-st.markdown(
-    "Essas fórmulas permitem transformar uma EDO em uma equação algébrica em $Y(s)$."
-)
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
 
