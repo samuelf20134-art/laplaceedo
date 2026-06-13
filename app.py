@@ -721,7 +721,7 @@ if calcular or st.session_state.get("resultado_disponivel", False):
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
 st.markdown('<p class="section-label">Contexto</p>', unsafe_allow_html=True)
-st.markdown('<h2 class="section-title">Onde a Transformada de Laplace é usada</h2>',
+st.markdown('<h2 class="section-title">Aqui daria pra colocar um resumo de onde isso é usado ou algo assim </h2>',
             unsafe_allow_html=True)
 
 col_app1, col_app2 = st.columns(2)
@@ -729,44 +729,32 @@ col_app1, col_app2 = st.columns(2)
 with col_app1:
     st.markdown("""
 <div class="app-item">
-  <strong>Circuitos elétricos (RLC)</strong><br>
-  A equação L·I'' + R·I' + (1/C)·I = E'(t) descreve a corrente num circuito série.
-  A transformada converte isso em uma expressão algébrica para I(s), facilitando
-  a análise em regime permanente e transitório.
+  <strong>.</strong><br>
+  .
 </div>
 <div class="app-item">
-  <strong>Sistemas massa-mola-amortecedor</strong><br>
-  m·x'' + γ·x' + k·x = F(t) é formalmente idêntica à equação do circuito RLC.
-  As mesmas técnicas se aplicam, e a solução revela frequências naturais, amortecimento
-  e resposta a forças externas periódicas ou impulsivas.
+  <strong>.</strong><br>
+  .
 </div>
 <div class="app-item">
-  <strong>Engenharia de controle</strong><br>
-  A função de transferência H(s) = Y(s)/U(s) é o objeto central da teoria de controle
-  clássica. A Transformada de Laplace permite representar sistemas dinâmicos como
-  frações racionais em s, facilitando análise de estabilidade e projeto de controladores.
+  <strong>.</strong><br>
+  .
 </div>
     """, unsafe_allow_html=True)
 
 with col_app2:
     st.markdown("""
 <div class="app-item">
-  <strong>Processamento de sinais</strong><br>
-  O plano s permite localizar polos e zeros de um sistema, determinando sua resposta
-  em frequência. Filtros passa-baixa, passa-alta e passa-banda são projetados diretamente
-  a partir da posição dos polos em s.
+  <strong>.</strong><br>
+  .
 </div>
 <div class="app-item">
-  <strong>EDOs com forçamentos descontínuos</strong><br>
-  Funções degrau (Heaviside) e impulsos (delta de Dirac) são difíceis de tratar
-  no domínio do tempo. No domínio de s, elas têm transformadas simples (e⁻ᶜˢ/s
-  e e⁻ᶜˢ), e o método se aplica sem modificações.
+  <strong>.</strong><br>
+  .
 </div>
 <div class="app-item">
-  <strong>Equações de 4ª ordem e superiores</strong><br>
-  Em teoria de vigas (equação de Euler-Bernoulli) e mecânica dos fluidos, surgem EDOs
-  de ordem 4 ou superior. A transformada reduz qualquer ordem a um problema algébrico
-  do mesmo grau.
+  <strong>.</strong><br>
+  .
 </div>
     """, unsafe_allow_html=True)
 
