@@ -430,8 +430,8 @@ Se vcs acharem bom, dá pra bolar uma explicação legal pra ficar tipo um slide
 
 with col_prop:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="section-label">Propriedades fundamentais</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Transformadas das derivadas</h2>',
+    st.markdown('<p class="section-label">Propriedades fundamentais </p>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">Tabela do autor, tô usando aqui de exemplo pra vcs</h2>',
                 unsafe_allow_html=True)
     st.markdown("""
 | Função | Transformada |
