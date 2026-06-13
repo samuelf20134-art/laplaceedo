@@ -698,23 +698,6 @@ if calcular or st.session_state.get("resultado_disponivel", False):
 
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-    # ─── Interpretação ────────────────────────────────────────────────────────
-
-    st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="section-label">Análise</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Interpretação da solução</h2>',
-                unsafe_allow_html=True)
-
-    interpretacao = interpretar_solucao(y_t, t_sym)
-    st.markdown(f"""
-<div class="interp-block">
-  <h4>Comportamento qualitativo</h4>
-  {interpretacao}
-  <br><br>
-  <strong>Expressão:</strong>&nbsp; y(t) = {sp.latex(y_t)}
-</div>
-    """, unsafe_allow_html=True)
-
 
 # ─── Aplicações ───────────────────────────────────────────────────────────────
 
