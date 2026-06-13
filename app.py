@@ -422,29 +422,15 @@ col_intro, col_prop = st.columns([3, 2], gap="large")
 with col_intro:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">O método</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Por que usar a Transformada de Laplace?</h2>',
+    st.markdown('<h2 class="section-title">espaço pra titulo</h2>',
                 unsafe_allow_html=True)
     st.markdown("""
-A Transformada de Laplace converte uma equação diferencial no domínio do tempo em uma
-equação algébrica no domínio de *s*. Isso é útil porque equações algébricas são,
-em geral, mais fáceis de manipular do que equações diferenciais.
-
-O procedimento tem quatro etapas:
-
-1. Aplicar a transformada à EDO, usando as propriedades das derivadas;
-2. Substituir as condições iniciais — elas entram automaticamente na equação algébrica;
-3. Resolver algebricamente para *Y(s)*, a transformada da solução desconhecida;
-4. Inverter *Y(s)* para obter *y(t)*, geralmente via decomposição em frações parciais.
-
-O método é especialmente vantajoso quando a força externa *f(t)* é descontínua
-(funções degrau, impulsos) ou quando as condições iniciais são não nulas, pois esses
-casos entram diretamente no cálculo sem exigir tratamento separado.
-    """)
+Passo a passo pra explicar (dps que definirmos eu mexo nisso aqui)
 
 with col_prop:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">Propriedades fundamentais</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Transformadas das derivadas</h2>',
+    st.markdown('<h2 class="section-title">Transformadas das derivadas (tabela do livro)</h2>',
                 unsafe_allow_html=True)
     st.markdown("""
 | Função | Transformada |
