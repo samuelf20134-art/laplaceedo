@@ -1,7 +1,7 @@
 """
 Transformada de Laplace — Ferramenta interativa para resolução de EDOs lineares
 UNIMONTES | Disciplina de Matemática Aplicada | Prof. Fernando Félix
-Alunos: Samuel, Bruno Gomes, Júlio César, Leonardo, Marcus
+Alunos: Bruno Gomes, Júlio César, Leonardo, Samuel
 """
 
 import streamlit as st
