@@ -432,18 +432,15 @@ with col_prop:
     st.markdown('<p class="section-label">Propriedades fundamentais</p>', unsafe_allow_html=True)
     st.markdown('<h2 class="section-title">Transformadas das derivadas (tabela do livro)</h2>',
                 unsafe_allow_html=True)
-st.markdown(r"""
-### Propriedades usadas
+st.markdown("### Propriedades usadas")
 
-| Expressão no tempo | Transformada de Laplace |
-|---|---|
-| $y(t)$ | $Y(s)$ |
-| $y'(t)$ | $sY(s) - y(0)$ |
-| $y''(t)$ | $s^2Y(s) - sy(0) - y'(0)$ |
+st.latex(r"\mathcal{L}\{y(t)\}=Y(s)")
+st.latex(r"\mathcal{L}\{y'(t)\}=sY(s)-y(0)")
+st.latex(r"\mathcal{L}\{y''(t)\}=s^2Y(s)-sy(0)-y'(0)")
 
-Essas fórmulas permitem transformar uma EDO em uma equação algébrica em \(Y(s)\).
-""")
-
+st.markdown(
+    "Essas fórmulas permitem transformar uma EDO em uma equação algébrica em $Y(s)$."
+)
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
 
