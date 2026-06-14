@@ -315,7 +315,169 @@ def transformada_inversa(Y_s, s, t):
 
     except Exception:
         return None
+def laplace_derivada(k, Y, s, iniciais):
+    """
+    Fórmula geral:
+    L{y^(k)} = s^k Y(s) - s^(k-1)y(0) - s^(k-2)y'(0) - ... - y^(k-1)(0)
+    """
+    if k == 0:
+        return Y
 
+    expr = s**k * Y
+
+    for j in range(k):
+        expr -= s**(k - 1 - j) * iniciais[j]
+
+    return expr
+
+
+def montar_laplace_geral(coefs, f_expr, iniciais):
+    """
+    Resolve por Laplace uma EDO linear de ordem n:
+
+    a_n y^(n) + a_(n-1)y^(n-1) + ... + a_1 y' + a_0 y = f(t)
+
+    coefs = [a_n, a_(n-1), ..., a_0]
+    iniciais = [y(0), y'(0), ..., y^(n-1)(0)]
+    """
+    s, t = sp.symbols('s t')
+    Y = sp.Function('Y')(s)
+
+    n = len(coefs) - 1
+
+    coefs = [sp.Rational(str(v)) for v in coefs]
+    iniciais = [sp.Rational(str(v)) for v in iniciais]
+    f_expr = sp.nsimplify(f_expr)
+
+    try:
+        F_s = sp.laplace_transform(f_expr, t, s, noconds=True)
+        F_s = sp.nsimplify(F_s)
+
+        if F_s.has(sp.LaplaceTransform):
+            return None, s, t, None, None
+
+    except Exception:
+        return None, s, t, None, None
+
+    lhs = 0
+
+    for k in range(n, -1, -1):
+        coef = coefs[n - k]
+        lhs += coef * laplace_derivada(k, Y, s, iniciais)
+
+    equacao = sp.Eq(lhs, F_s)
+
+    try:
+        sol = sp.solve(equacao, Y)
+
+        if not sol:
+            return None, s, t, F_s, equacao
+
+        Y_s = sp.nsimplify(sol[0])
+        Y_s = sp.factor(sp.cancel(sp.together(Y_s)))
+
+    except Exception:
+        return None, s, t, F_s, equacao
+
+    return Y_s, s, t, F_s, equacao
+
+
+def solucao_numerica_geral(coefs, f_func, iniciais, t_span, n_pontos=600):
+    """
+    Resolve numericamente uma EDO linear de ordem n usando solve_ivp.
+    """
+    n = len(coefs) - 1
+
+    coefs = [float(v) for v in coefs]
+    iniciais = [float(v) for v in iniciais]
+
+    a_n = coefs[0]
+
+    if a_n == 0:
+        return None, None
+
+    def sistema(t, u):
+        try:
+            ft = f_func(t) if callable(f_func) else float(f_func)
+        except Exception:
+            ft = 0.0
+
+        derivadas = list(u[1:])
+
+        soma = 0.0
+
+        for k in range(n):
+            coef_a_k = coefs[n - k]
+            soma += coef_a_k * u[k]
+
+        ultima = (ft - soma) / a_n
+        derivadas.append(ultima)
+
+        return derivadas
+
+    t_eval = np.linspace(t_span[0], t_span[1], n_pontos)
+
+    sol = solve_ivp(
+        sistema,
+        t_span,
+        iniciais,
+        t_eval=t_eval,
+        method='RK45',
+        rtol=1e-8,
+        atol=1e-10,
+        dense_output=False,
+    )
+
+    if sol.success:
+        return sol.t, sol.y[0]
+
+    return None, None
+
+
+def rotulo_derivada_inicial(k):
+    if k == 0:
+        return "y(0)"
+    if k == 1:
+        return "y′(0)"
+    if k == 2:
+        return "y″(0)"
+    if k == 3:
+        return "y‴(0)"
+    return f"y^({k})(0)"
+
+
+def rotulo_coeficiente(ordem_derivada):
+    if ordem_derivada == 0:
+        return "Coeficiente de y"
+    if ordem_derivada == 1:
+        return "Coeficiente de y′"
+    if ordem_derivada == 2:
+        return "Coeficiente de y″"
+    if ordem_derivada == 3:
+        return "Coeficiente de y‴"
+    if ordem_derivada == 4:
+        return "Coeficiente de y⁽⁴⁾"
+    return f"Coeficiente de y^({ordem_derivada})"
+
+
+def montar_edo_latex(coefs, f_expr):
+    t = sp.Symbol('t')
+    y = sp.Function('y')
+    n = len(coefs) - 1
+
+    lhs = 0
+
+    for k in range(n, -1, -1):
+        coef = sp.Rational(str(coefs[n - k]))
+
+        if k == 0:
+            termo = y(t)
+        else:
+            termo = sp.Derivative(y(t), (t, k))
+
+        lhs += coef * termo
+
+    return sp.Eq(lhs, f_expr)
 
 def solucao_numerica(a, b, c, f_func, y0, v0, t_span, n_pontos=600):
     """
@@ -475,67 +637,137 @@ st.markdown('<p class="section-label">Calculadora</p>', unsafe_allow_html=True)
 st.markdown('<h2 class="section-title">Defina a EDO e as condições iniciais</h2>',
             unsafe_allow_html=True)
 
-# Carregar exemplo guiado
-if "exemplo_carregado" not in st.session_state:
-    st.session_state.exemplo_carregado = False
 
-col_ex, _ = st.columns([1, 4])
-with col_ex:
-    if st.button("Carregar exemplo do seminário"):
-        st.session_state.exemplo_carregado = True
-        st.session_state.a_val = 1.0
-        st.session_state.b_val = -1.0
-        st.session_state.c_val = -2.0
-        st.session_state.f_str = "0"
-        st.session_state.y0_val = 1.0
-        st.session_state.v0_val = 0.0
-        st.session_state.t_max = 3.0
+def carregar_exemplo_ordem2():
+    st.session_state.ordem_input = 2
+    st.session_state.coef_2_0 = 1.0
+    st.session_state.coef_2_1 = -1.0
+    st.session_state.coef_2_2 = -2.0
+    st.session_state.ini_2_0 = 1.0
+    st.session_state.ini_2_1 = 0.0
+    st.session_state.f_input_geral = "0"
+    st.session_state.tmax_geral = 5.0
+    st.session_state.resultado_disponivel = False
 
-if st.session_state.exemplo_carregado:
-    st.markdown("""
-<div class="warn-box">
-Exemplo guiado carregado: <strong>y'' − y' − 2y = 0</strong>,&nbsp;
-y(0) = 1, y'(0) = 0. A solução esperada é y(t) = (1/3)e²ᵗ + (2/3)e⁻ᵗ.
-</div>
-    """, unsafe_allow_html=True)
 
-st.markdown("")
+def carregar_exemplo_ordem4():
+    st.session_state.ordem_input = 4
+    st.session_state.coef_4_0 = 1.0
+    st.session_state.coef_4_1 = 0.0
+    st.session_state.coef_4_2 = 0.0
+    st.session_state.coef_4_3 = 0.0
+    st.session_state.coef_4_4 = -1.0
+    st.session_state.ini_4_0 = 0.0
+    st.session_state.ini_4_1 = 1.0
+    st.session_state.ini_4_2 = 0.0
+    st.session_state.ini_4_3 = 0.0
+    st.session_state.f_input_geral = "0"
+    st.session_state.tmax_geral = 8.0
+    st.session_state.resultado_disponivel = False
+
+
+if "ordem_input" not in st.session_state:
+    st.session_state.ordem_input = 2
+
+col_ex1, col_ex2, _ = st.columns([1.2, 1.2, 3])
+
+with col_ex1:
+    st.button("Exemplo ordem 2", on_click=carregar_exemplo_ordem2)
+
+with col_ex2:
+    st.button("Exemplo ordem 4", on_click=carregar_exemplo_ordem4)
+
+
+ordem = st.selectbox(
+    "Ordem da EDO",
+    [2, 3, 4],
+    key="ordem_input",
+    help="Escolha a maior derivada presente na equação."
+)
+
+defaults_coefs = {
+    2: [1.0, -1.0, -2.0],
+    3: [1.0, 0.0, 0.0, -1.0],
+    4: [1.0, 0.0, 0.0, 0.0, -1.0],
+}
+
+defaults_iniciais = {
+    2: [1.0, 0.0],
+    3: [0.0, 1.0, 0.0],
+    4: [0.0, 1.0, 0.0, 0.0],
+}
 
 with st.container():
     st.markdown('<div class="input-panel">', unsafe_allow_html=True)
-    st.markdown('<h3>EDO: &nbsp; a · y″ + b · y′ + c · y = f(t)</h3>', unsafe_allow_html=True)
+    st.markdown(
+        f'<h3>EDO linear de ordem {ordem}: &nbsp; aₙ · y⁽ⁿ⁾ + ... + a₁ · y′ + a₀ · y = f(t)</h3>',
+        unsafe_allow_html=True
+    )
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        a_val = st.number_input("Coeficiente a (y″)",
-                                 value=st.session_state.get("a_val", 1.0),
-                                 key="a_input", step=0.5)
-    with col2:
-        b_val = st.number_input("Coeficiente b (y′)",
-                                 value=st.session_state.get("b_val", -1.0),
-                                 key="b_input", step=0.5)
-    with col3:
-        c_val = st.number_input("Coeficiente c (y)",
-                                 value=st.session_state.get("c_val", -2.0),
-                                 key="c_input", step=0.5)
+    st.markdown("**Coeficientes da EDO**")
 
-    col4, col5, col6, col7 = st.columns([2, 1, 1, 1])
-    with col4:
+    coefs = []
+    cols_coef = st.columns(min(ordem + 1, 5))
+
+    for i in range(ordem + 1):
+        ordem_derivada = ordem - i
+        key = f"coef_{ordem}_{i}"
+
+        if key not in st.session_state:
+            st.session_state[key] = defaults_coefs[ordem][i]
+
+        with cols_coef[i % len(cols_coef)]:
+            coefs.append(
+                st.number_input(
+                    rotulo_coeficiente(ordem_derivada),
+                    key=key,
+                    step=0.5
+                )
+            )
+
+    st.markdown("**Condições iniciais**")
+
+    iniciais = []
+    cols_ini = st.columns(min(ordem, 4))
+
+    for j in range(ordem):
+        key = f"ini_{ordem}_{j}"
+
+        if key not in st.session_state:
+            st.session_state[key] = defaults_iniciais[ordem][j]
+
+        with cols_ini[j % len(cols_ini)]:
+            iniciais.append(
+                st.number_input(
+                    rotulo_derivada_inicial(j),
+                    key=key,
+                    step=0.5
+                )
+            )
+
+    col_f, col_tmax = st.columns([3, 1])
+
+    with col_f:
+        if "f_input_geral" not in st.session_state:
+            st.session_state.f_input_geral = "0"
+
         f_str = st.text_input(
             "Força externa f(t)",
-            value=st.session_state.get("f_str", "0"),
             placeholder="Ex: sin(2*t), exp(t), t, 0",
-            key="f_input",
+            key="f_input_geral",
         )
-    with col5:
-        y0_val = st.number_input("y(0)", value=st.session_state.get("y0_val", 1.0),
-                                  key="y0_input", step=0.5)
-    with col6:
-        v0_val = st.number_input("y′(0)", value=st.session_state.get("v0_val", 0.0),
-                                  key="v0_input", step=0.5)
-    with col7:
-        t_max = st.number_input("t máximo", value=st.session_state.get("t_max", 5.0),
-                                 min_value=0.5, max_value=50.0, step=0.5, key="tmax_input")
+
+    with col_tmax:
+        if "tmax_geral" not in st.session_state:
+            st.session_state.tmax_geral = 5.0
+
+        t_max = st.number_input(
+            "t máximo",
+            min_value=0.5,
+            max_value=50.0,
+            step=0.5,
+            key="tmax_geral"
+        )
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -558,8 +790,11 @@ if calcular or st.session_state.get("resultado_disponivel", False):
             st.stop()
 
         with st.spinner("Calculando..."):
-            Y_s, s_sym, t_sym, F_s = montar_laplace(a_val, b_val, c_val, f_expr, y0_val, v0_val)
-
+            Y_s, s_sym, t_sym, F_s, equacao_laplace = montar_laplace_geral(
+    coefs,
+    f_expr,
+    iniciais
+)
         if Y_s is None:
             st.error("Não foi possível obter Y(s). A função f(t) inserida pode não ter "
                       "transformada de Laplace expressa em forma fechada.")
@@ -573,24 +808,36 @@ if calcular or st.session_state.get("resultado_disponivel", False):
                       "Verifique os coeficientes — raízes complexas podem exigir tratamento adicional.")
             st.stop()
 
-        st.session_state.resultado_disponivel = True
-        st.session_state.resultado = {
-            "a": a_val, "b": b_val, "c": c_val,
-            "f_expr": f_expr, "f_str": f_str,
-            "y0": y0_val, "v0": v0_val, "t_max": t_max,
-            "Y_s": Y_s, "Y_parcial": Y_parcial,
-            "y_t": y_t, "s_sym": s_sym, "t_sym": t_sym,
-            "F_s": F_s,
-        }
+       st.session_state.resultado_disponivel = True
+st.session_state.resultado = {
+    "ordem": ordem,
+    "coefs": coefs,
+    "iniciais": iniciais,
+    "f_expr": f_expr,
+    "f_str": f_str,
+    "t_max": t_max,
+    "Y_s": Y_s,
+    "Y_parcial": Y_parcial,
+    "y_t": y_t,
+    "s_sym": s_sym,
+    "t_sym": t_sym,
+    "F_s": F_s,
+    "equacao_laplace": equacao_laplace,
+}
 
     # ── Recuperar resultado armazenado ──
     res = st.session_state.resultado
-    a_val = res["a"]; b_val = res["b"]; c_val = res["c"]
-    f_expr = res["f_expr"]; f_str = res["f_str"]
-    y0_val = res["y0"]; v0_val = res["v0"]; t_max = res["t_max"]
+   ordem = res["ordem"]
+coefs = res["coefs"]
+iniciais = res["iniciais"]
+f_expr = res["f_expr"]
+f_str = res["f_str"]
+t_max = res["t_max"]
+equacao_laplace = res["equacao_laplace"]
     Y_s = res["Y_s"]; Y_parcial = res["Y_parcial"]
     y_t = res["y_t"]; s_sym = res["s_sym"]; t_sym = res["t_sym"]
     F_s = res["F_s"]
+
 
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
@@ -607,26 +854,35 @@ if calcular or st.session_state.get("resultado_disponivel", False):
         # Passo 1: EDO original
         st.markdown('<div class="result-step">', unsafe_allow_html=True)
         st.markdown('<div class="step-num">Passo 1 — EDO no domínio do tempo</div>', unsafe_allow_html=True)
-        sinal_b = f"+ {b_val}" if b_val >= 0 else f"- {abs(b_val)}"
-        sinal_c = f"+ {c_val}" if c_val >= 0 else f"- {abs(c_val)}"
-        f_display = f_str if f_str != "0" else "0"
-        st.latex(
-            rf"{sp.latex(sp.Rational(a_val).limit_denominator(1000))} \, y'' \;"
-            rf"{sinal_b} \, y' \; {sinal_c} \, y = {sp.latex(f_expr)}"
+
+        edo_display = montar_edo_latex(coefs, f_expr)
+        st.latex(sp.latex(edo_display))
+
+        texto_iniciais = ", ".join(
+            [f"{rotulo_derivada_inicial(i)} = {iniciais[i]}" for i in range(ordem)]
         )
-        st.caption(f"Condições iniciais: y(0) = {y0_val}, y'(0) = {v0_val}")
+
+        st.caption(f"Condições iniciais: {texto_iniciais}")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # Passo 2: Transformada
+                # Passo 2: Transformada
         st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 2 — Transformada de Laplace e substituição das condições iniciais</div>',
-                    unsafe_allow_html=True)
-        st.latex(
-            r"\mathcal{L}\{y''\} = s^2 Y(s) - s \cdot y(0) - y'(0), \quad"
-            r"\mathcal{L}\{y'\} = s Y(s) - y(0)"
+        st.markdown(
+            '<div class="step-num">Passo 2 — Transformada de Laplace e substituição das condições iniciais</div>',
+            unsafe_allow_html=True
         )
-        st.markdown('</div>', unsafe_allow_html=True)
 
+        st.latex(
+            r"\mathcal{L}\{y^{(n)}\}="
+            r"s^nY(s)-s^{n-1}y(0)-s^{n-2}y'(0)-\cdots-y^{(n-1)}(0)"
+        )
+
+        st.markdown("Equação algébrica obtida:")
+
+        if equacao_laplace is not None:
+            st.latex(sp.latex(equacao_laplace))
+
+        st.markdown('</div>', unsafe_allow_html=True)
         # Passo 3: Y(s) simplificado
         st.markdown('<div class="result-step">', unsafe_allow_html=True)
         st.markdown('<div class="step-num">Passo 3 — Y(s) resolvido</div>', unsafe_allow_html=True)
@@ -662,8 +918,12 @@ if calcular or st.session_state.get("resultado_disponivel", False):
     # Solução numérica
     f_num_func = sp.lambdify(t_sym, f_expr, modules=['numpy']) if f_expr != sp.Integer(0) else lambda t: 0.0
     try:
-        t_num, y_num = solucao_numerica(a_val, b_val, c_val, f_num_func, y0_val, v0_val,
-                                        (0, t_max))
+       t_num, y_num = solucao_numerica_geral(
+    coefs,
+    f_num_func,
+    iniciais,
+    (0, t_max)
+)
     except Exception:
         t_num, y_num = None, None
 
