@@ -809,7 +809,7 @@ if calcular:
             "equacao_laplace": equacao_laplace
         }
 
-# ── Exibição dos resultados (fora do 'if calcular', mas dentro do 'if resultado_disponivel')
+# Exibição dos resultados
 if st.session_state.get("resultado_disponivel", False):
     # ── Recuperar resultado armazenado ──
     res = st.session_state.resultado
@@ -827,6 +827,8 @@ if st.session_state.get("resultado_disponivel", False):
     s_sym = res["s_sym"]
     t_sym = res["t_sym"]
     F_s = res["F_s"]
+
+    st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
