@@ -294,23 +294,25 @@ def decompor_fracoes(Y_s, s):
 
 
 def transformada_inversa(Y_s, s, t):
-    """Calcula a transformada inversa de Laplace de Y(s) e limpa a forma exibida."""
+    """Calcula a transformada inversa de Laplace de Y(s) em forma expandida."""
     try:
         Y_s = sp.nsimplify(Y_s)
         Y_s = sp.factor(sp.cancel(sp.together(Y_s)))
 
         y_t = sp.inverse_laplace_transform(Y_s, s, t, noconds=True)
 
-        # Remove Heaviside(t), pois estamos trabalhando com t >= 0
+        # Remove Heaviside(t), pois a Transformada de Laplace trabalha com t >= 0.
         y_t = y_t.replace(sp.Heaviside(t), 1)
         y_t = y_t.replace(sp.Heaviside(t, sp.Rational(1, 2)), 1)
 
-        # Expande para aparecer como soma de exponenciais, igual ao livro
+        # Força a solução a aparecer como soma de termos, igual ao livro.
+        y_t = sp.expand(y_t)
+        y_t = sp.powsimp(y_t, force=True)
         y_t = sp.expand(y_t)
         y_t = sp.nsimplify(y_t)
-        y_t = sp.simplify(y_t)
 
         return y_t
+
     except Exception:
         return None
 
