@@ -242,36 +242,41 @@ def montar_laplace(a, b, c, f_expr, y0, v0):
     """
     Monta a equação algébrica em Y(s) após aplicar a Transformada de Laplace
     à EDO:  a*y'' + b*y' + c*y = f(t),  y(0)=y0, y'(0)=v0.
-
-    Retorna (Y_s, s, t, F_s) onde Y_s é a expressão de Y(s).
     """
     s, t = sp.symbols('s t')
+
+    a = sp.Rational(str(a))
+    b = sp.Rational(str(b))
+    c = sp.Rational(str(c))
+    y0 = sp.Rational(str(y0))
+    v0 = sp.Rational(str(v0))
+    f_expr = sp.nsimplify(f_expr)
+
     Y = sp.Function('Y')(s)
 
-    # Transformadas das derivadas
-    # L{y''} = s²Y - s·y(0) - y'(0)
-    # L{y'}  = sY - y(0)
     Ly2 = s**2 * Y - s * y0 - v0
     Ly1 = s * Y - y0
     Ly0 = Y
 
-    # Transformada de f(t)
     try:
         F_s = sp.laplace_transform(f_expr, t, s, noconds=True)
+        F_s = sp.nsimplify(F_s)
     except Exception:
         F_s = None
 
     if F_s is None:
         return None, s, t, None
 
-    # Equação algébrica: a·L{y''} + b·L{y'} + c·L{y} = F(s)
     equacao = sp.Eq(a * Ly2 + b * Ly1 + c * Ly0, F_s)
 
     try:
         sol = sp.solve(equacao, Y)
         if not sol:
             return None, s, t, F_s
-        Y_s = sp.simplify(sol[0])
+
+        Y_s = sp.nsimplify(sol[0])
+        Y_s = sp.factor(sp.cancel(sp.together(Y_s)))
+
     except Exception:
         return None, s, t, F_s
 
@@ -279,19 +284,32 @@ def montar_laplace(a, b, c, f_expr, y0, v0):
 
 
 def decompor_fracoes(Y_s, s):
-    """Aplica decomposição em frações parciais a Y(s)."""
+    """Aplica decomposição em frações parciais a Y(s), usando forma exata."""
     try:
-        Y_parcial = sp.apart(Y_s, s)
-        return Y_parcial
+        Y_s = sp.nsimplify(Y_s)
+        Y_s = sp.factor(sp.cancel(sp.together(Y_s)))
+        return sp.apart(Y_s, s)
     except Exception:
         return Y_s
 
 
 def transformada_inversa(Y_s, s, t):
-    """Calcula a transformada inversa de Laplace de Y(s)."""
+    """Calcula a transformada inversa de Laplace de Y(s) e limpa a forma exibida."""
     try:
+        Y_s = sp.nsimplify(Y_s)
+        Y_s = sp.factor(sp.cancel(sp.together(Y_s)))
+
         y_t = sp.inverse_laplace_transform(Y_s, s, t, noconds=True)
-        y_t = sp.simplify(sp.expand(y_t))
+
+        # Remove Heaviside(t), pois estamos trabalhando com t >= 0
+        y_t = y_t.replace(sp.Heaviside(t), 1)
+        y_t = y_t.replace(sp.Heaviside(t, sp.Rational(1, 2)), 1)
+
+        # Expande para aparecer como soma de exponenciais, igual ao livro
+        y_t = sp.expand(y_t)
+        y_t = sp.nsimplify(y_t)
+        y_t = sp.simplify(y_t)
+
         return y_t
     except Exception:
         return None
