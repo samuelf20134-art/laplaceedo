@@ -826,7 +826,7 @@ if st.session_state.get("resultado_disponivel", False):
     "t_sym": t_sym,
     "F_s": F_s,
     "equacao_laplace": equacao_laplace,
-}
+
 
     # ── Recuperar resultado armazenado ──
     res = st.session_state.resultado
