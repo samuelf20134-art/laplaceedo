@@ -809,25 +809,29 @@ if calcular:
             "equacao_laplace": equacao_laplace
         }
 
-# Exibição dos resultados (fora do 'if calcular', mas dentro do 'if resultado_disponivel')
+# ── Exibição dos resultados (fora do 'if calcular', mas dentro do 'if resultado_disponivel')
 if st.session_state.get("resultado_disponivel", False):
+    # ── Recuperar resultado armazenado ──
     res = st.session_state.resultado
-    # Agora sim, acesse as variáveis a partir de res
+    
     ordem = res["ordem"]
     coefs = res["coefs"]
-    "iniciais": iniciais,
-    "f_expr": f_expr,
-    "f_str": f_str,
-    "t_max": t_max,
-    "Y_s": Y_s,
-    "Y_parcial": Y_parcial,
-    "y_t": y_t,
-    "s_sym": s_sym,
-    "t_sym": t_sym,
-    "F_s": F_s,
-    "equacao_laplace": equacao_laplace,
+    iniciais = res["iniciais"]
+    f_expr = res["f_expr"]
+    f_str = res["f_str"]
+    t_max = res["t_max"]
+    equacao_laplace = res["equacao_laplace"]
+    Y_s = res["Y_s"]
+    Y_parcial = res["Y_parcial"]
+    y_t = res["y_t"]
+    s_sym = res["s_sym"]
+    t_sym = res["t_sym"]
+    F_s = res["F_s"]
 
+    st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
+    # ─── Cálculo simbólico passo a passo ─────────────────────────────────────
+    # ... (o restante do seu código de exibição continua aqui)
     # ── Recuperar resultado armazenado ──
     res = st.session_state.resultado
    ordem = res["ordem"]
