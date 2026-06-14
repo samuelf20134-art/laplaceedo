@@ -775,43 +775,46 @@ calcular = st.button("Calcular solução")
 
 # ─── Cálculo ─────────────────────────────────────────────────────────────────
 
-if calcular or st.session_state.get("resultado_disponivel", False):
+if calcular:
+    # Validação
+    if coefs[0] == 0:
+        st.error("O coeficiente do termo de maior ordem não pode ser zero.")
+        st.stop()
 
-    if calcular:
-        # Validar entrada
-        if a_val == 0:
-            st.error("O coeficiente a não pode ser zero (não seria uma equação de segunda ordem).")
-            st.stop()
+    f_expr = parse_f(f_str)
+    if f_expr is None:
+        st.error("Erro na expressão f(t).")
+        st.stop()
 
-        f_expr = parse_f(f_str)
-        if f_expr is None:
-            st.error(f"Não foi possível interpretar a expressão f(t) = '{f_str}'. "
-                      "Use notação Python: sin(t), cos(2*t), exp(-t), t**2, etc.")
-            st.stop()
-
-        with st.spinner("Calculando..."):
-            Y_s, s_sym, t_sym, F_s, equacao_laplace = montar_laplace_geral(
-    coefs,
-    f_expr,
-    iniciais
-)
+    with st.spinner("Calculando..."):
+        Y_s, s_sym, t_sym, F_s, equacao_laplace = montar_laplace_geral(coefs, f_expr, iniciais)
+        
         if Y_s is None:
-            st.error("Não foi possível obter Y(s). A função f(t) inserida pode não ter "
-                      "transformada de Laplace expressa em forma fechada.")
+            st.error("Não foi possível obter Y(s).")
             st.stop()
 
         Y_parcial = decompor_fracoes(Y_s, s_sym)
         y_t = transformada_inversa(Y_s, s_sym, t_sym)
 
         if y_t is None:
-            st.error("A transformada inversa de Y(s) não pôde ser calculada simbolicamente. "
-                      "Verifique os coeficientes — raízes complexas podem exigir tratamento adicional.")
+            st.error("Erro na transformada inversa.")
             st.stop()
 
         st.session_state.resultado_disponivel = True
         st.session_state.resultado = {
-    "ordem": ordem,
-    "coefs": coefs,
+            "ordem": ordem, "coefs": coefs, "iniciais": iniciais,
+            "f_expr": f_expr, "f_str": f_str, "t_max": t_max,
+            "Y_s": Y_s, "Y_parcial": Y_parcial, "y_t": y_t,
+            "s_sym": s_sym, "t_sym": t_sym, "F_s": F_s,
+            "equacao_laplace": equacao_laplace
+        }
+
+# Exibição dos resultados (fora do 'if calcular', mas dentro do 'if resultado_disponivel')
+if st.session_state.get("resultado_disponivel", False):
+    res = st.session_state.resultado
+    # Agora sim, acesse as variáveis a partir de res
+    ordem = res["ordem"]
+    coefs = res["coefs"]
     "iniciais": iniciais,
     "f_expr": f_expr,
     "f_str": f_str,
