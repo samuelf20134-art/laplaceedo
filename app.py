@@ -808,8 +808,8 @@ if calcular or st.session_state.get("resultado_disponivel", False):
                       "Verifique os coeficientes — raízes complexas podem exigir tratamento adicional.")
             st.stop()
 
-       st.session_state.resultado_disponivel = True
-st.session_state.resultado = {
+        st.session_state.resultado_disponivel = True
+        st.session_state.resultado = {
     "ordem": ordem,
     "coefs": coefs,
     "iniciais": iniciais,
