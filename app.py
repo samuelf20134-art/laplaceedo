@@ -398,18 +398,16 @@ with col_passos:
 with col_info:
     st.markdown("""
 <div class="info-card">
-  <div class="card-title">Variáveis de desvio</div>
-  Simplificam a EDO eliminando o ponto de operação, permitindo condição inicial nula: <em>h'(0) = 0</em>.
+  <div class="card-title">.</div>
+  .
 </div>
 <div class="info-card">
-  <div class="card-title">Função de transferência</div>
-  <em>G(s) = Rᵥ / (ARᵥs + 1)</em> é um sistema de <strong>primeira ordem</strong>.
-  O ganho estático é Rᵥ e a constante de tempo é ARᵥ.
+  <div class="card-title">.</div>
+  .
 </div>
 <div class="info-card-gold">
-  <div class="card-title">Resposta ao degrau</div>
-  O nível parte de <em>h̄</em> e converge a <em>h̄ + RᵥM</em>, com curva exponencial
-  característica de sistemas de primeira ordem.
+  <div class="card-title">.</div>
+  .
 </div>
 """, unsafe_allow_html=True)
 
