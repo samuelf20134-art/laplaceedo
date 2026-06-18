@@ -247,26 +247,36 @@ col_intro, col_diag = st.columns([3, 2], gap="large")
 
 with col_intro:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="section-label">O modelo físico</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Tanque de armazenamento de líquido</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">Resumo técnico</p>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">Funcionamento do aplicativo</h2>', unsafe_allow_html=True)
 
     st.markdown("""
 <p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
-  O processo consiste em um tanque onde <strong style="color:#1A3A5C;">h(t)</strong> é o nível do líquido,
-  <strong style="color:#1A3A5C;">qᵢ(t)</strong> é a vazão de entrada,
-  <strong style="color:#1A3A5C;">A</strong> é a área da seção transversal
-  e <strong style="color:#1A3A5C;">Rᵥ</strong> é a resistência da válvula de saída.
-  O balanço de massa fornece a EDO:
+  O aplicativo foi desenvolvido em <strong>Python</strong> com <strong>Streamlit</strong>,
+  usando uma interface interativa para calcular e visualizar a resposta do nível
+  de um tanque a uma entrada degrau.
+</p>
+
+<p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
+  A calculadora recebe os valores de <strong>A</strong>, <strong>Rᵥ</strong>,
+  <strong>M</strong>, <strong>h̄</strong> e do tempo máximo. Com esses dados,
+  o código calcula os parâmetros principais e gera o gráfico da resposta temporal.
 </p>
 """, unsafe_allow_html=True)
 
-    st.latex(r"A\,\frac{dh}{dt} = q_i - \frac{1}{R_v}\,h")
+    st.markdown("""
+<div class="info-card">
+  <div class="card-title">Lógica principal</div>
+  Entrada dos parâmetros → cálculo de ARᵥ, RᵥM e h(∞) → aplicação da fórmula final →
+  plotagem da curva h(t).
+</div>
+""", unsafe_allow_html=True)
+
+    st.latex(r"h(t) = \bar{h} + R_vM\left(1 - e^{-t/AR_v}\right)")
 
     st.markdown("""
-<p style="font-family:'Inter',sans-serif;font-size:0.85rem;color:#374151;line-height:1.7;margin:0.75rem 0 0 0;">
-  O objetivo é obter a <strong>função de transferência</strong> entre <em>h</em> e <em>qᵢ</em>
-  e, a partir dela, a <strong>resposta ao degrau</strong> — aplicando a Transformada de Laplace
-  sobre a EDO escrita em variáveis de desvio.
+<p style="font-family:'Inter',sans-serif;font-size:0.84rem;color:#6B7280;line-height:1.7;margin:0.75rem 0 0 0;">
+  O NumPy foi usado nos cálculos numéricos e o Plotly na construção do gráfico interativo.
 </p>
 """, unsafe_allow_html=True)
 
