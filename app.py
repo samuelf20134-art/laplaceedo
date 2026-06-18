@@ -588,27 +588,43 @@ if calcular_btn or "res" in st.session_state:
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
 
-# ─── Seção 4: Aplicações da Transformada de Laplace ──────────────────────────
+# ─── Seção 4: Aplicações no livro ────────────────────────────────────────────
 
 st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-st.markdown('<p class="section-label">Contexto</p>', unsafe_allow_html=True)
-st.markdown('<h2 class="section-title">O que essa transformação permite fazer</h2>', unsafe_allow_html=True)
+st.markdown('<p class="section-label">Aplicações</p>', unsafe_allow_html=True)
+st.markdown('<h2 class="section-title">O que a Transformada de Laplace permite fazer</h2>', unsafe_allow_html=True)
 
 col_a1, col_a2 = st.columns(2, gap="large")
 
 with col_a1:
     st.markdown("""
 <div class="app-item">
-  <strong>Resolver EDOs lineares com condição inicial</strong><br>
-  Converte a equação diferencial em algébrica, resolve em <em>s</em> e aplica a transformada inversa para obter a solução no tempo.
+  <strong>Resolver EDOs lineares</strong><br>
+  A Transformada de Laplace converte uma equação diferencial em uma equação algébrica,
+  facilitando a obtenção da solução no domínio de <em>s</em> e depois no tempo.
 </div>
+
 <div class="app-item">
-  <strong>Obter a função de transferência de um processo</strong><br>
-  A razão <em>Y(s)/U(s)</em> descreve completamente a dinâmica de um sistema linear em torno de um ponto de operação.
+  <strong>Obter funções de transferência</strong><br>
+  A função de transferência relaciona a entrada e a saída de um sistema linear,
+  permitindo representar o comportamento dinâmico por meio da razão
+  <em>Y(s)/U(s)</em>.
 </div>
+""", unsafe_allow_html=True)
+
+with col_a2:
+    st.markdown("""
 <div class="app-item">
-  <strong>Analisar a resposta a diferentes entradas</strong><br>
-  Com <em>G(s)</em> definido, basta multiplicar pela transformada da entrada — degrau, rampa, impulso — para obter a saída correspondente.
+  <strong>Analisar respostas a entradas</strong><br>
+  Depois de obter <em>G(s)</em>, é possível calcular a resposta do sistema para
+  diferentes entradas, como o degrau usado no Exemplo 4.1.
+</div>
+
+<div class="app-item">
+  <strong>Combinar modelos de sistemas</strong><br>
+  As funções de transferência podem ser manipuladas por propriedades como soma
+  e multiplicação, facilitando a representação de sistemas formados por mais de
+  uma etapa.
 </div>
 """, unsafe_allow_html=True)
 
