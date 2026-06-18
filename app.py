@@ -253,22 +253,23 @@ with col_intro:
     st.markdown("""
 <p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
   O aplicativo foi desenvolvido em <strong>Python</strong> com <strong>Streamlit</strong>,
-  usando uma interface interativa para calcular e visualizar a resposta do nível
-  de um tanque a uma entrada degrau.
+  ferramenta que permite criar interfaces web interativas a partir de um script.
+  A página organiza o Exemplo 4.1 em uma apresentação visual com calculadora,
+  fórmulas matemáticas e gráfico da resposta temporal.
 </p>
 
 <p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
-  A calculadora recebe os valores de <strong>A</strong>, <strong>Rᵥ</strong>,
-  <strong>M</strong>, <strong>h̄</strong> e do tempo máximo. Com esses dados,
-  o código calcula os parâmetros principais e gera o gráfico da resposta temporal.
+  Para o design, foi utilizado <strong>CSS personalizado</strong>, responsável por definir
+  cores, fontes, espaçamentos, cartões, cabeçalho, divisórias e botões. Isso deixou
+  o app mais limpo, organizado e adequado para uma apresentação acadêmica.
 </p>
 """, unsafe_allow_html=True)
 
     st.markdown("""
 <div class="info-card">
   <div class="card-title">Lógica principal</div>
-  Entrada dos parâmetros → cálculo de ARᵥ, RᵥM e h(∞) → aplicação da fórmula final →
-  plotagem da curva h(t).
+  Entrada dos parâmetros → cálculo de AR<sub>v</sub>, R<sub>v</sub>M e h(∞) →
+  aplicação da fórmula final → plotagem da curva h(t).
 </div>
 """, unsafe_allow_html=True)
 
@@ -276,7 +277,9 @@ with col_intro:
 
     st.markdown("""
 <p style="font-family:'Inter',sans-serif;font-size:0.84rem;color:#6B7280;line-height:1.7;margin:0.75rem 0 0 0;">
-  O NumPy foi usado nos cálculos numéricos e o Plotly na construção do gráfico interativo.
+  O <strong>NumPy</strong> foi usado nos cálculos numéricos, enquanto o
+  <strong>Plotly</strong> foi utilizado para gerar o gráfico interativo da resposta
+  do nível do líquido ao longo do tempo.
 </p>
 """, unsafe_allow_html=True)
 
