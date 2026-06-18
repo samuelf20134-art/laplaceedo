@@ -1,9 +1,6 @@
-bash
-
-cat > /mnt/user-data/outputs/app.py << 'PYEOF'
 """
 Transformada de Laplace — Ferramenta interativa para resolução de EDOs lineares
-UNIMONTES | Disciplina de Equações Diferenciais Ordinárias | Prof. Fernando Félix
+UNIMONTES | Disciplina de Matemática Aplicada | Prof. Fernando Félix
 Alunos: Bruno Gomes, Júlio César, Leonardo, Marcus, Samuel
 """
 
@@ -14,7 +11,7 @@ import plotly.graph_objects as go
 from scipy.integrate import solve_ivp
 import os
 
-# ─── Configuração da página ───────────────────────────────────────────────────
+# ─── Configuração da página ──────────────────────────────────────────────────
 
 st.set_page_config(
     page_title="Transformada de Laplace — EDOs",
@@ -23,7 +20,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ─── CSS ─────────────────────────────────────────────────────────────────────
+# ─── CSS personalizado ────────────────────────────────────────────────────────
 
 st.markdown("""
 <style>
@@ -126,17 +123,6 @@ st.markdown("""
     font-size: 0.65rem; font-weight: 700;
     letter-spacing: 0.1em; text-transform: uppercase;
     color: #C4A32A; margin-bottom: 0.4rem;
-  }
-
-  .tank-badge {
-    display: inline-block;
-    background: #1A3A5C;
-    color: #C4A32A;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.7rem; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 0.25rem 0.75rem;
-    margin-bottom: 1rem;
   }
 
   .interp-block {
@@ -375,7 +361,7 @@ def montar_edo_latex(coefs, f_expr):
     return sp.Eq(lhs, f_expr)
 
 
-# ─── Cabeçalho ───────────────────────────────────────────────────────────────
+# ─── Cabeçalho institucional ──────────────────────────────────────────────────
 
 logo_path = "assets/logo_unimontes.png"
 if os.path.exists(logo_path):
@@ -411,18 +397,15 @@ with col_intro:
     st.markdown('<p class="section-label">O método</p>', unsafe_allow_html=True)
     st.markdown('<h2 class="section-title">Passo a passo</h2>', unsafe_allow_html=True)
     st.markdown("""
-A Transformada de Laplace converte uma EDO linear no domínio do tempo em uma equação
-algébrica no domínio de *s*. Resolver essa equação algébrica e aplicar a transformada
-inversa retorna a solução y(t) de forma direta, incorporando as condições iniciais
-automaticamente no processo.
+Se vcs acharem bom, dá pra bolar uma explicação legal pra ficar tipo um slide, tbm tem que definir o tema e tal
     """)
 
 with col_prop:
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">Propriedades fundamentais</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Pares de transformadas</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 class="section-title">Tabela do autor, tô usando aqui de exemplo pra vcs</h2>', unsafe_allow_html=True)
     st.markdown("""
-| Função f(t) | Transformada F(s) |
+| Função | Transformada |
 |---|---|
 | $y(t)$ | $Y(s)$ |
 | $y'(t)$ | $sY(s) - y(0)$ |
@@ -431,19 +414,16 @@ with col_prop:
 | $\\sin(at)$ | $\\frac{a}{s^2+a^2}$ |
 | $\\cos(at)$ | $\\frac{s}{s^2+a^2}$ |
 | $t^n$ | $\\frac{n!}{s^{n+1}}$ |
-| $1$ (degrau) | $\\frac{1}{s}$ |
     """)
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SEÇÃO 1 — CALCULADORA GENÉRICA
-# ═══════════════════════════════════════════════════════════════════════════════
+# ─── Painel de entrada ────────────────────────────────────────────────────────
 
 st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
 st.markdown('<p class="section-label">Calculadora</p>', unsafe_allow_html=True)
-st.markdown('<h2 class="section-title">Resolva qualquer EDO linear</h2>', unsafe_allow_html=True)
+st.markdown('<h2 class="section-title">Defina a EDO e as condições iniciais</h2>', unsafe_allow_html=True)
 
 
 def carregar_exemplo_ordem2():
@@ -478,8 +458,10 @@ if "ordem_input" not in st.session_state:
     st.session_state.ordem_input = 2
 
 col_ex1, col_ex2, _ = st.columns([1.2, 1.2, 3])
+
 with col_ex1:
     st.button("Exemplo ordem 2", on_click=carregar_exemplo_ordem2)
+
 with col_ex2:
     st.button("Exemplo ordem 4", on_click=carregar_exemplo_ordem4)
 
@@ -495,6 +477,7 @@ defaults_coefs = {
     3: [1.0, 0.0, 0.0, -1.0],
     4: [1.0, 0.0, 0.0, 0.0, -1.0],
 }
+
 defaults_iniciais = {
     2: [1.0, 0.0],
     3: [0.0, 1.0, 0.0],
@@ -511,6 +494,7 @@ with st.container():
     st.markdown("**Coeficientes da EDO**")
     coefs = []
     cols_coef = st.columns(min(ordem + 1, 5))
+
     for i in range(ordem + 1):
         ordem_derivada = ordem - i
         key = f"coef_{ordem}_{i}"
@@ -522,6 +506,7 @@ with st.container():
     st.markdown("**Condições iniciais**")
     iniciais = []
     cols_ini = st.columns(min(ordem, 4))
+
     for j in range(ordem):
         key = f"ini_{ordem}_{j}"
         if key not in st.session_state:
@@ -530,6 +515,7 @@ with st.container():
             iniciais.append(st.number_input(rotulo_derivada_inicial(j), key=key, step=0.5))
 
     col_f, col_tmax = st.columns([3, 1])
+
     with col_f:
         if "f_input_geral" not in st.session_state:
             st.session_state.f_input_geral = "0"
@@ -538,12 +524,15 @@ with st.container():
             placeholder="Ex: sin(2*t), exp(t), t, 0",
             key="f_input_geral",
         )
+
     with col_tmax:
         if "tmax_geral" not in st.session_state:
             st.session_state.tmax_geral = 5.0
         t_max = st.number_input(
             "t máximo",
-            min_value=0.5, max_value=50.0, step=0.5,
+            min_value=0.5,
+            max_value=50.0,
+            step=0.5,
             key="tmax_geral"
         )
 
@@ -551,7 +540,7 @@ with st.container():
 
 calcular = st.button("Calcular solução")
 
-# ─── Cálculo genérico ─────────────────────────────────────────────────────────
+# ─── Cálculo ─────────────────────────────────────────────────────────────────
 
 if calcular:
     if coefs[0] == 0:
@@ -586,18 +575,29 @@ if calcular:
             "equacao_laplace": equacao_laplace,
         }
 
-# ─── Resultados genéricos ─────────────────────────────────────────────────────
+# ─── Exibição dos resultados ──────────────────────────────────────────────────
 
 if st.session_state.get("resultado_disponivel", False):
     res = st.session_state.resultado
 
-    ordem     = res["ordem"];    coefs    = res["coefs"];   iniciais = res["iniciais"]
-    f_expr    = res["f_expr"];   f_str    = res["f_str"];   t_max    = res["t_max"]
+    ordem = res["ordem"]
+    coefs = res["coefs"]
+    iniciais = res["iniciais"]
+    f_expr = res["f_expr"]
+    f_str = res["f_str"]
+    t_max = res["t_max"]
     equacao_laplace = res["equacao_laplace"]
-    Y_s       = res["Y_s"];      Y_parcial = res["Y_parcial"]; y_t  = res["y_t"]
-    s_sym     = res["s_sym"];    t_sym    = res["t_sym"];   F_s      = res["F_s"]
+    Y_s = res["Y_s"]
+    Y_parcial = res["Y_parcial"]
+    y_t = res["y_t"]
+    s_sym = res["s_sym"]
+    t_sym = res["t_sym"]
+    F_s = res["F_s"]
 
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
+    # ─── Cálculo simbólico passo a passo ─────────────────────────────────────
+
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">Desenvolvimento simbólico</p>', unsafe_allow_html=True)
     st.markdown('<h2 class="section-title">Resolução passo a passo</h2>', unsafe_allow_html=True)
@@ -605,39 +605,54 @@ if st.session_state.get("resultado_disponivel", False):
     col_passos, col_espaco = st.columns([3, 1])
     with col_passos:
 
+        # Passo 1
         st.markdown('<div class="result-step">', unsafe_allow_html=True)
         st.markdown('<div class="step-num">Passo 1 — EDO no domínio do tempo</div>', unsafe_allow_html=True)
         edo_display = montar_edo_latex(coefs, f_expr)
         st.latex(sp.latex(edo_display))
-        texto_iniciais = ", ".join([f"{rotulo_derivada_inicial(i)} = {iniciais[i]}" for i in range(ordem)])
+        texto_iniciais = ", ".join(
+            [f"{rotulo_derivada_inicial(i)} = {iniciais[i]}" for i in range(ordem)]
+        )
         st.caption(f"Condições iniciais: {texto_iniciais}")
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # Passo 2
         st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 2 — Transformada de Laplace e condições iniciais</div>', unsafe_allow_html=True)
-        st.latex(r"\mathcal{L}\{y^{(n)}\}=s^nY(s)-s^{n-1}y(0)-s^{n-2}y'(0)-\cdots-y^{(n-1)}(0)")
+        st.markdown(
+            '<div class="step-num">Passo 2 — Transformada de Laplace e substituição das condições iniciais</div>',
+            unsafe_allow_html=True
+        )
+        st.latex(
+            r"\mathcal{L}\{y^{(n)}\}="
+            r"s^nY(s)-s^{n-1}y(0)-s^{n-2}y'(0)-\cdots-y^{(n-1)}(0)"
+        )
         st.markdown("Equação algébrica obtida:")
         if equacao_laplace is not None:
             st.latex(sp.latex(equacao_laplace))
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # Passo 3
         st.markdown('<div class="result-step">', unsafe_allow_html=True)
         st.markdown('<div class="step-num">Passo 3 — Y(s) resolvido</div>', unsafe_allow_html=True)
         st.latex(r"Y(s) = " + sp.latex(Y_s))
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # Passo 4
         if Y_parcial != Y_s:
             st.markdown('<div class="result-step">', unsafe_allow_html=True)
             st.markdown('<div class="step-num">Passo 4 — Decomposição em frações parciais</div>', unsafe_allow_html=True)
             st.latex(r"Y(s) = " + sp.latex(Y_parcial))
             st.markdown('</div>', unsafe_allow_html=True)
 
+        # Resultado final
         st.markdown('<div class="result-step" style="border-left: 3px solid #C4A32A;">', unsafe_allow_html=True)
         st.markdown('<div class="step-num" style="color:#1A3A5C;">Resultado — y(t)</div>', unsafe_allow_html=True)
         st.latex(r"y(t) = " + sp.latex(y_t))
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
+    # ─── Visualização ─────────────────────────────────────────────────────────
 
     st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
     st.markdown('<p class="section-label">Visualização</p>', unsafe_allow_html=True)
@@ -660,13 +675,21 @@ if st.session_state.get("resultado_disponivel", False):
     )
 
     fig = go.Figure()
+
     if modo_grafico in ("Solução simbólica", "Comparação") and y_simb is not None:
         y_simb_clean = np.where(np.isfinite(y_simb), y_simb, np.nan)
-        fig.add_trace(go.Scatter(x=t_array, y=y_simb_clean, mode='lines',
-            name='Simbólica (SymPy)', line=dict(color='#1A3A5C', width=2.5)))
+        fig.add_trace(go.Scatter(
+            x=t_array, y=y_simb_clean,
+            mode='lines', name='Simbólica (SymPy)',
+            line=dict(color='#1A3A5C', width=2.5),
+        ))
+
     if modo_grafico in ("Solução numérica (RK45)", "Comparação") and t_num is not None:
-        fig.add_trace(go.Scatter(x=t_num, y=y_num, mode='lines',
-            name='Numérica (RK45)', line=dict(color='#C4A32A', width=2, dash='dot')))
+        fig.add_trace(go.Scatter(
+            x=t_num, y=y_num,
+            mode='lines', name='Numérica (RK45)',
+            line=dict(color='#C4A32A', width=2, dash='dot'),
+        ))
 
     fig.update_layout(
         plot_bgcolor='white', paper_bgcolor='white',
@@ -679,326 +702,35 @@ if st.session_state.get("resultado_disponivel", False):
         legend=dict(orientation='h', y=1.05, x=0, bgcolor='rgba(0,0,0,0)'),
         height=400,
     )
+
     st.plotly_chart(fig, use_container_width=True)
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# SEÇÃO 2 — EXEMPLO DO TANQUE (SEBORG, EXEMPLO 4.1)
-# ═══════════════════════════════════════════════════════════════════════════════
-
-st.markdown('<hr class="divider">', unsafe_allow_html=True)
-st.markdown('<div class="tank-badge">Aplicação em Engenharia Química</div>', unsafe_allow_html=True)
-st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-st.markdown('<p class="section-label">Exemplo do livro</p>', unsafe_allow_html=True)
-st.markdown('<h2 class="section-title">Tanque de nível — Seborg et al., Exemplo 4.1</h2>', unsafe_allow_html=True)
-
-st.markdown("""
-Considere um tanque cilíndrico com escoamento por válvula. A dinâmica do nível de
-líquido h é descrita pela EDO de 1ª ordem:
-
-$$A \\frac{dh'}{dt} = q_i' - \\frac{1}{R_v} h'$$
-
-onde $h'$ e $q_i'$ são variáveis de desvio em relação ao estado estacionário.
-Aplicando a Transformada de Laplace com condições iniciais nulas (sistema parte do regime permanente),
-obtém-se a função de transferência e, para uma entrada degrau de magnitude $M$, a resposta analítica do nível.
-""")
-
-col_tank_left, col_tank_right = st.columns([1, 1], gap="large")
-
-with col_tank_left:
-    st.markdown('<div class="input-panel">', unsafe_allow_html=True)
-    st.markdown('<h3>Parâmetros do sistema</h3>', unsafe_allow_html=True)
-
-    col_rv, col_a = st.columns(2)
-    with col_rv:
-        Rv = st.number_input(
-            "Rᵥ — Resistência da válvula",
-            min_value=0.01, max_value=100.0, value=2.0, step=0.5,
-            key="tank_Rv",
-            help="Relaciona nível e vazão de saída: q_saída = h / Rv"
-        )
-    with col_a:
-        A = st.number_input(
-            "A — Área da seção transversal",
-            min_value=0.01, max_value=100.0, value=1.0, step=0.5,
-            key="tank_A",
-            help="Área da base do tanque cilíndrico"
-        )
-
-    M = st.number_input(
-        "M — Magnitude do degrau na vazão de entrada",
-        min_value=0.01, max_value=100.0, value=1.0, step=0.5,
-        key="tank_M",
-        help="Perturbação em degrau aplicada em t=0: Δq_i = M"
-    )
-
-    t_max_tank = st.number_input(
-        "t máximo",
-        min_value=1.0, max_value=200.0, value=float(int(5 * A * Rv)), step=1.0,
-        key="tank_tmax"
-    )
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    calcular_tank = st.button("Calcular resposta do tanque")
-
-with col_tank_right:
-    st.markdown('<div class="input-panel">', unsafe_allow_html=True)
-    st.markdown('<h3>Interpretação física</h3>', unsafe_allow_html=True)
-
-    tau = A * Rv
-    h_ss = Rv * M
-
-    st.markdown(f"""
-**Constante de tempo** $\\tau = A \\cdot R_v$
-
-$$\\tau = {A} \\times {Rv} = {tau:.3f}$$
-
-Tempo para atingir ~63% do valor final.
-
----
-
-**Valor final** $h'(\\infty) = R_v \\cdot M$
-
-$$h'(\\infty) = {Rv} \\times {M} = {h_ss:.3f}$$
-
-Novo nível de regime permanente após a perturbação.
-
----
-
-**Função de transferência**
-
-$$G(s) = \\frac{{H'(s)}}{{Q_i'(s)}} = \\frac{{R_v}}{{A R_v s + 1}} = \\frac{{{Rv:.3f}}}{{{tau:.3f} s + 1}}$$
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ─── Cálculo e exibição do tanque ────────────────────────────────────────────
-
-if calcular_tank:
-    s, t = sp.symbols('s t', positive=True)
-
-    Rv_s = sp.Rational(str(Rv)).limit_denominator(10000)
-    A_s  = sp.Rational(str(A)).limit_denominator(10000)
-    M_s  = sp.Rational(str(M)).limit_denominator(10000)
-
-    # H'(s) = (Rv / (A*Rv*s + 1)) * (M/s)
-    H_s = (Rv_s / (A_s * Rv_s * s + 1)) * (M_s / s)
-    H_s = sp.cancel(H_s)
-
-    # Frações parciais
-    H_parcial = sp.apart(H_s, s)
-
-    # Inversa de Laplace
-    h_t = sp.inverse_laplace_transform(H_s, s, t, noconds=True)
-    h_t = h_t.replace(sp.Heaviside(t), 1)
-    h_t = h_t.replace(sp.Heaviside(t, sp.Rational(1, 2)), 1)
-    h_t = sp.simplify(h_t)
-
-    st.session_state.tank_resultado = {
-        "H_s": H_s, "H_parcial": H_parcial, "h_t": h_t,
-        "Rv": Rv, "A": A, "M": M, "t_max": t_max_tank,
-        "s": s, "t": t,
-    }
-    st.session_state.tank_calculado = True
-
-if st.session_state.get("tank_calculado", False):
-    tr = st.session_state.tank_resultado
-    H_s       = tr["H_s"];    H_parcial = tr["H_parcial"]; h_t = tr["h_t"]
-    Rv_v      = tr["Rv"];     A_v       = tr["A"];          M_v = tr["M"]
-    t_max_v   = tr["t_max"];  s_sym     = tr["s"];          t_sym_tk = tr["t"]
-
-    tau_v = A_v * Rv_v
-    h_ss_v = Rv_v * M_v
-
     st.markdown('<hr class="divider">', unsafe_allow_html=True)
-    st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="section-label">Desenvolvimento — Tanque</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Resolução passo a passo</h2>', unsafe_allow_html=True)
-
-    col_tank_passos, _ = st.columns([3, 1])
-    with col_tank_passos:
-
-        # Passo 1
-        st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 1 — EDO em variáveis de desvio</div>', unsafe_allow_html=True)
-        st.latex(
-            r"A \frac{dh'}{dt} = q_i' - \frac{1}{R_v} h'"
-            r"\qquad h'(0) = 0"
-        )
-        st.caption(f"Com A = {A_v}, Rᵥ = {Rv_v}, condição inicial nula (sistema em regime permanente)")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Passo 2
-        st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 2 — Aplicação da Transformada de Laplace</div>', unsafe_allow_html=True)
-        st.latex(
-            r"A \cdot s H'(s) = Q_i'(s) - \frac{1}{R_v} H'(s)"
-        )
-        st.latex(
-            r"\left( A s + \frac{1}{R_v} \right) H'(s) = Q_i'(s)"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Passo 3
-        st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 3 — Função de transferência G(s)</div>', unsafe_allow_html=True)
-        st.latex(
-            r"G(s) = \frac{H'(s)}{Q_i'(s)} = \frac{R_v}{A R_v s + 1}"
-            rf"= \frac{{{Rv_v:.4g}}}{{{tau_v:.4g} s + 1}}"
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Passo 4
-        st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 4 — Entrada degrau e H\'(s)</div>', unsafe_allow_html=True)
-        st.latex(
-            r"Q_i'(s) = \frac{M}{s} = \frac{" + f"{M_v:.4g}" + r"}{s}"
-        )
-        st.latex(r"H'(s) = " + sp.latex(H_s))
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Passo 5
-        st.markdown('<div class="result-step">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num">Passo 5 — Frações parciais</div>', unsafe_allow_html=True)
-        st.latex(r"H'(s) = " + sp.latex(H_parcial))
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Resultado
-        st.markdown('<div class="result-step" style="border-left: 3px solid #C4A32A;">', unsafe_allow_html=True)
-        st.markdown('<div class="step-num" style="color:#1A3A5C;">Resultado — h\'(t)</div>', unsafe_allow_html=True)
-        st.latex(r"h'(t) = R_v M \left(1 - e^{-t/(A R_v)}\right)")
-        st.latex(
-            r"h'(t) = "
-            + f"{h_ss_v:.4g}"
-            + r"\left(1 - e^{-t/"
-            + f"{tau_v:.4g}"
-            + r"}\right)"
-        )
-        st.latex(r"h'(t) = " + sp.latex(h_t))
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # ─── Gráfico do tanque ────────────────────────────────────────────────────
-
-    st.markdown('<hr class="divider">', unsafe_allow_html=True)
-    st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="section-label">Visualização</p>', unsafe_allow_html=True)
-    st.markdown('<h2 class="section-title">Resposta ao degrau — nível h\'(t)</h2>', unsafe_allow_html=True)
-
-    t_arr = np.linspace(0, t_max_v, 800)
-    h_num = Rv_v * M_v * (1 - np.exp(-t_arr / tau_v))
-
-    # Avalia também a expressão simbólica como verificação
-    try:
-        h_simb_func = sp.lambdify(t_sym_tk, h_t, modules=['numpy'])
-        h_simb_arr = h_simb_func(t_arr)
-        h_simb_arr = np.where(np.isfinite(h_simb_arr), h_simb_arr, np.nan)
-    except Exception:
-        h_simb_arr = None
-
-    fig_tank = go.Figure()
-
-    fig_tank.add_trace(go.Scatter(
-        x=t_arr, y=h_num, mode='lines',
-        name="h'(t) analítica",
-        line=dict(color='#1A3A5C', width=2.5),
-    ))
-
-    if h_simb_arr is not None:
-        fig_tank.add_trace(go.Scatter(
-            x=t_arr, y=h_simb_arr, mode='lines',
-            name="h'(t) simbólica (SymPy)",
-            line=dict(color='#C4A32A', width=2, dash='dot'),
-        ))
-
-    # Linha do valor final
-    fig_tank.add_hline(
-        y=h_ss_v, line_dash="dash", line_color="#9CA3AF", line_width=1,
-        annotation_text=f"h'(∞) = {h_ss_v:.3f}",
-        annotation_position="bottom right",
-        annotation_font_color="#6B7280",
-    )
-
-    # Marca tau (63,2%)
-    h_tau = h_ss_v * (1 - np.exp(-1))
-    fig_tank.add_trace(go.Scatter(
-        x=[tau_v], y=[h_tau], mode='markers+text',
-        name=f'τ = {tau_v:.3f}',
-        marker=dict(color='#C4A32A', size=9, symbol='circle'),
-        text=[f"  τ = {tau_v:.3f}"],
-        textposition="middle right",
-        textfont=dict(size=11, color='#C4A32A'),
-    ))
-
-    fig_tank.update_layout(
-        plot_bgcolor='white', paper_bgcolor='white',
-        font=dict(family='Inter, sans-serif', size=12, color='#374151'),
-        margin=dict(l=60, r=30, t=30, b=50),
-        xaxis=dict(title='Tempo t', showgrid=True, gridcolor='#E5E7EB',
-                   zeroline=True, zerolinecolor='#9CA3AF', linecolor='#D1D5DB'),
-        yaxis=dict(title="h'(t) — nível de desvio", showgrid=True, gridcolor='#E5E7EB',
-                   zeroline=True, zerolinecolor='#9CA3AF', linecolor='#D1D5DB'),
-        legend=dict(orientation='h', y=1.05, x=0, bgcolor='rgba(0,0,0,0)'),
-        height=420,
-    )
-
-    st.plotly_chart(fig_tank, use_container_width=True)
-
-    # Tabela de referência rápida
-    st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="section-label">Resumo</p>', unsafe_allow_html=True)
-
-    col_tab, _ = st.columns([2, 2])
-    with col_tab:
-        t_refs = [0, tau_v * 0.5, tau_v, 2 * tau_v, 3 * tau_v, 5 * tau_v]
-        rows = []
-        for tr_val in t_refs:
-            h_val = h_ss_v * (1 - np.exp(-tr_val / tau_v))
-            pct = (h_val / h_ss_v * 100) if h_ss_v != 0 else 0
-            rows.append(f"<tr><td>t = {tr_val:.3f}</td><td>{h_val:.4f}</td><td>{pct:.1f}%</td></tr>")
-
-        st.markdown(f"""
-<table>
-  <thead>
-    <tr><th>Tempo</th><th>h'(t)</th><th>% do valor final</th></tr>
-  </thead>
-  <tbody>
-    {"".join(rows)}
-  </tbody>
-</table>
-        """, unsafe_allow_html=True)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# APLICAÇÕES
-# ═══════════════════════════════════════════════════════════════════════════════
+# ─── Aplicações ───────────────────────────────────────────────────────────────
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 st.markdown('<div class="gold-accent"></div>', unsafe_allow_html=True)
 st.markdown('<p class="section-label">Contexto</p>', unsafe_allow_html=True)
-st.markdown('<h2 class="section-title">Onde a Transformada de Laplace é aplicada</h2>', unsafe_allow_html=True)
+st.markdown('<h2 class="section-title">Aqui daria pra colocar um resumo de onde isso é usado ou algo assim</h2>',
+            unsafe_allow_html=True)
 
 col_app1, col_app2 = st.columns(2)
 
 with col_app1:
     st.markdown("""
-<div class="app-item"><strong>Engenharia Química</strong><br>
-Controle de nível em tanques, reatores CSTR, colunas de destilação — modelagem de respostas dinâmicas a perturbações de processo.</div>
-<div class="app-item"><strong>Engenharia Elétrica</strong><br>
-Circuitos RLC, filtros analógicos, amplificadores — análise de resposta em frequência e projeto de controladores PID.</div>
-<div class="app-item"><strong>Engenharia Mecânica</strong><br>
-Sistemas massa-mola-amortecedor, vibrações estruturais, controle de atuadores — resposta transiente a forças externas.</div>
+<div class="app-item"><strong>.</strong><br>.</div>
+<div class="app-item"><strong>.</strong><br>.</div>
+<div class="app-item"><strong>.</strong><br>.</div>
     """, unsafe_allow_html=True)
 
 with col_app2:
     st.markdown("""
-<div class="app-item"><strong>Controle Automático</strong><br>
-Projeto de controladores no domínio da frequência: lugar das raízes, critério de Nyquist, margens de ganho e fase.</div>
-<div class="app-item"><strong>Processamento de Sinais</strong><br>
-Filtros digitais e analógicos, análise espectral, modulação AM/FM — base matemática do domínio da frequência.</div>
-<div class="app-item"><strong>Biomatemática</strong><br>
-Modelos farmacocinéticos de absorção e eliminação de medicamentos, dinâmica de populações com atraso.</div>
+<div class="app-item"><strong>.</strong><br>.</div>
+<div class="app-item"><strong>.</strong><br>.</div>
+<div class="app-item"><strong>.</strong><br>.</div>
     """, unsafe_allow_html=True)
-
 
 # ─── Rodapé ───────────────────────────────────────────────────────────────────
 
@@ -1010,8 +742,3 @@ st.markdown("""
   Construído com Streamlit, SymPy, NumPy, Plotly e SciPy
 </div>
 """, unsafe_allow_html=True)
-PYEOF
-echo "OK"
-Saída
-
-OK
