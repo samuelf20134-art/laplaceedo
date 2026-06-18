@@ -254,8 +254,6 @@ with col_intro:
 <p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
   O aplicativo foi desenvolvido em <strong>Python</strong> com <strong>Streamlit</strong>,
   ferramenta que permite criar interfaces web interativas a partir de um script.
-  A página organiza o Exemplo 4.1 em uma apresentação visual com calculadora,
-  fórmulas matemáticas e gráfico da resposta temporal.
 </p>
 
 <p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
