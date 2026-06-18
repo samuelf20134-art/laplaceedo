@@ -259,7 +259,7 @@ with col_intro:
 <p style="font-family:'Inter',sans-serif;font-size:0.88rem;color:#374151;line-height:1.8;margin:0 0 1rem 0;">
   Para o design, foi utilizado <strong>CSS personalizado</strong>, responsável por definir
   cores, fontes, espaçamentos, cartões, cabeçalho, divisórias e botões. Isso deixou
-  o app mais limpo, organizado e adequado para uma apresentação acadêmica.
+  o app organizado.
 </p>
 """, unsafe_allow_html=True)
 
